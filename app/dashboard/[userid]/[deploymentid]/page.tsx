@@ -18,7 +18,6 @@ export default function DeploymentPage({
 	params: Promise<{ userid: string; deploymentid: string }>;
 }) {
 	const [deploymentid, setDeploymentId] = useState("");
-	const [userid, setUserId] = useState("");
 	const [deployment, setDeployment] = useState<Deployment | undefined>();
 	const [stats, setStats] = useState<ContainerStats | null>(null);
 	const [loading, setLoading] = useState(true);
@@ -37,9 +36,7 @@ export default function DeploymentPage({
 
 	async function getDeployment() {
 		try {
-			const user_id = (await params).userid;
 			const deployment_id = (await params).deploymentid;
-			setUserId(user_id);
 			setDeploymentId(deployment_id);
 			const response = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/deployment/${deployment_id}`,

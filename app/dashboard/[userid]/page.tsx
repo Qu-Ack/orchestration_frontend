@@ -45,7 +45,7 @@ export default function DashboardPage({
 			}
 		}
 		getDeployments();
-	}, []);
+	}, [params]);
 
 	const addEnvVar = () => {
 		if (!newEnvKey.trim()) {
@@ -130,7 +130,7 @@ export default function DashboardPage({
 		<div className="min-h-screen bg-white text-black">
 			<div className="p-6 max-w-7xl mx-auto">
 				<h1 className="text-4xl font-bold mb-8 border-b border-black pb-2">
-					{userid}'s Dashboard
+					{userid} Dashboard
 				</h1>
 
 				<div className="flex justify-center mb-12">
