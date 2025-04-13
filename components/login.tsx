@@ -42,6 +42,7 @@ export default function Login() {
 			const data = await response.json();
 			console.log(data);
 			localStorage.setItem("session", data.sesid);
+			localStorage.setItem("userid", data.userid);
 			router.push(`/dashboard/${data.userid}`);
 		} catch (err: any) {
 			setError(err.error || "Failed to login. Please try again.");

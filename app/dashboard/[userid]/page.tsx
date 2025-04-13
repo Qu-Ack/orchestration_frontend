@@ -76,6 +76,7 @@ export default function DashboardPage({
 				`${process.env.NEXT_PUBLIC_API_URL}/deploy`,
 				{
 					method: "POST",
+					signal: AbortSignal.timeout(10000),
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: localStorage.getItem("session")!,

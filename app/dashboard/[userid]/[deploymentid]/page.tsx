@@ -121,6 +121,7 @@ export default function DeploymentPage({
 				`${process.env.NEXT_PUBLIC_API_URL}/redeploy/${deploymentid}`,
 				{
 					method: "PUT",
+					signal: AbortSignal.timeout(8000),
 					headers: {
 						Authorization: localStorage.getItem("session")!,
 					},
