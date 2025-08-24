@@ -39,6 +39,7 @@ export default function DeploymentPage({
   const [editValue, setEditValue] = useState("");
   const [envError, setEnvError] = useState("");
   const [deploying, setDeploying] = useState(false);
+  const [updates, setUpdates] = useState<string[]>([]);
   const [deploymentState, setDeploymentState] =
     useState<DeploymentStatus | null>(null);
 
@@ -134,6 +135,7 @@ export default function DeploymentPage({
       if (response.status == 204) {
         setDeploying(false);
         setDeploymentState(null);
+        setUpdates([]);
         return;
       }
 
@@ -302,8 +304,16 @@ export default function DeploymentPage({
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null;
 
+    let eventSource: EventSource | null = null;
     if (deploying) {
       getDeploymentStatus();
+      eventSource = new EventSource(
+        `${process.env.NEXT_PUBLIC_API_URL}/events`,
+      );
+
+      eventSource.onmessage = function (evt) {
+        setUpdates((updates) => [...updates, evt.data]);
+      };
 
       intervalId = setInterval(getDeploymentStatus, 2000);
     }
@@ -312,6 +322,10 @@ export default function DeploymentPage({
       if (intervalId) {
         clearInterval(intervalId);
       }
+      if (eventSource) {
+        eventSource.close();
+      }
+      setUpdates([]);
     };
   }, [deploying]);
 
@@ -384,7 +398,6 @@ export default function DeploymentPage({
             </div>
           </div>
         )}
-
         {/* Deployment Details */}
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left Column - Details */}
@@ -627,7 +640,42 @@ export default function DeploymentPage({
             </div>
           </div>
         </div>
+        {deploying && (
+          <div
+            className="fixed bottom-4 right-4 w-96 max-h-64 overflow-y-auto p-3 
+               bg-white text-black text-base rounded-xl shadow-lg font-mono tracking-tight border border-gray-200"
+          >
+            {updates.map((update, i) => {
+              const [type, id, subdomain, message] = update.split(":");
 
+              return (
+                <div
+                  key={i}
+                  className={`flex items-center gap-3 p-2 rounded border-l-4
+            ${type === "error" ? "bg-red-50 text-red-700 border-red-500" : "bg-green-50 text-green-700 border-green-500"}
+          `}
+                >
+                  <span
+                    className={`uppercase font-bold px-2 py-0.5 rounded 
+              ${type === "error" ? "bg-red-500 text-white" : "bg-green-500 text-white"}
+            `}
+                  >
+                    {type}
+                  </span>
+
+                  {/* deployment id */}
+                  <span className="text-sm opacity-60">{id}</span>
+
+                  <span className="px-2 py-0.5 rounded bg-gray-100 text-sm">
+                    {subdomain}
+                  </span>
+
+                  <span className="flex-1">{message}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
         {showLogs && (
           <div className="mt-6 border border-black p-6 rounded-md">
             <h2 className="text-xl font-bold mb-4">Container Logs</h2>
