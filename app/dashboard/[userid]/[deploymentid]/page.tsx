@@ -171,8 +171,6 @@ export default function DeploymentPage({
         throw new Error("Failed to restart deployment");
       }
       getDeploymentStatus();
-
-      alert("Deployment restarted successfully");
     } catch (err) {
       alert(
         err instanceof Error ? err.message : "Failed to restart deployment",
@@ -646,7 +644,7 @@ export default function DeploymentPage({
                bg-white text-black text-base rounded-xl shadow-lg font-mono tracking-tight border border-gray-200"
           >
             {updates.map((update, i) => {
-              const [type, id, subdomain, message] = update.split(":");
+              const [, type, id, subdomain, message] = update.split(":");
 
               return (
                 <div
@@ -660,14 +658,14 @@ export default function DeploymentPage({
               ${type === "error" ? "bg-red-500 text-white" : "bg-green-500 text-white"}
             `}
                   >
-                    {type}
+                    {type.trim()}
                   </span>
 
                   {/* deployment id */}
                   <span className="text-sm opacity-60">{id}</span>
 
                   <span className="px-2 py-0.5 rounded bg-gray-100 text-sm">
-                    {subdomain}
+                    {subdomain.trim()}
                   </span>
 
                   <span className="flex-1">{message}</span>
