@@ -59,6 +59,9 @@ export default function Register() {
 
   return (
     <div className="h-screen w-screen flex justify-center items-center">
+      <h1 className="text-red-700">
+        THIS ROUTE WON'T WORK BECAUSE I HAVE CLOSED IT
+      </h1>
       <form
         className="flex flex-col p-3 m-3 border border-black"
         onSubmit={handleRegister}
